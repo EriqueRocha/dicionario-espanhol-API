@@ -1,0 +1,7 @@
+-- CREATE TABLE IF NOT EXISTS public.palavra_entity_variante_espanhol
+-- (
+--     palavra_entity_id integer NOT NULL,
+--     dicionariole character varying(255),
+--     paises character varying(255)[],
+--     palavra character varying(255)
+-- );
