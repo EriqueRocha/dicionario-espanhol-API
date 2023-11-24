@@ -20,7 +20,6 @@ public class AdministradorController {
     private ManagerRepository repository;
 
     @PostMapping("/adicionar")
-    @CrossOrigin(origins = "http://localhost:3000/cadastroAdm")
     public Response save(@RequestBody ManagerRequest request){
         return ResponseFactory.create(service.save(request),
                 "Salvo com sucesso",
