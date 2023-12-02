@@ -109,4 +109,13 @@ public class ManagerService {
         entity.setPassword(passwordEncoder().encode(request.getPassword()));
         return repository.save(entity);
     }
+
+    public String findRoleById(Integer mId) {
+        ManagerEntity entity = null;
+        if (repository.existsById(mId)){
+            entity = this.findById(mId);
+            return entity.getRole();
+        }else throw new RecordNotFoundException("Manager","id");
+
+    }
 }

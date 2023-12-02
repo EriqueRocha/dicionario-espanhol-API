@@ -2,10 +2,14 @@ package com.dicionarioespanholAPI.controller;
 
 import com.dicionarioespanholAPI.infra.handler.Response;
 import com.dicionarioespanholAPI.infra.handler.ResponseFactory;
+import com.dicionarioespanholAPI.infra.security.jwt.JwtProperties;
 import com.dicionarioespanholAPI.model.palavra.PalavraEntity;
 import com.dicionarioespanholAPI.model.palavra.PalavraResquest;
 import com.dicionarioespanholAPI.repository.PalavraRepository;
+import com.dicionarioespanholAPI.service.ManagerService;
 import com.dicionarioespanholAPI.service.PalavraService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.Size;
@@ -22,6 +26,12 @@ import java.util.Optional;
 public class PalavraController {
 
     @Autowired
+    private JwtProperties jwtProperties;
+
+    @Autowired
+    private ManagerService managerService;
+
+    @Autowired
     private PalavraService service;
 
     @Autowired
@@ -29,8 +39,17 @@ public class PalavraController {
 
     @PostMapping("/adicionar")
     @Operation(summary = "Adicionar uma nova palavra")
-    public Object save(@RequestBody PalavraResquest resquest){
-        return service.save(resquest);
+    public Object save(@RequestHeader("Authorization") String authorizationHeader, @RequestBody PalavraResquest resquest){
+
+        String subject = extractSubjectFromToken(authorizationHeader);
+        Integer mId = managerService.findIdByLogin(subject);
+        String role = managerService.findRoleById(mId);
+        if (role.equals("MANAGER")) {
+            return ResponseFactory.create(service.save(resquest), "Palavra cadastrado com sucesso", "Agora este administrador pode gerenciar o sistema");
+        }else {
+            return ResponseFactory.error("Você não tem permissão para prosseguir com a requisição","Está é uma requisição do tipo administrador");
+        }
+
     }
 
     @DeleteMapping("/deletar")
@@ -102,4 +121,20 @@ public class PalavraController {
     public Response getImages(@PathVariable Integer id){
         return  ResponseFactory.ok(service.getImages(id));
     }
+
+    private String extractSubjectFromToken(String authorizationHeader) {
+        try {
+            String token = authorizationHeader.replace(jwtProperties.getPrefix(), "");
+
+            Claims claims = Jwts.parser()
+                    .setSigningKey(jwtProperties.getKey())
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            return claims.getSubject();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

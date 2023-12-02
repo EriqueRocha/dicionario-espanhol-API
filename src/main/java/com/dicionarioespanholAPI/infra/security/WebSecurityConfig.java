@@ -3,7 +3,6 @@ package com.dicionarioespanholAPI.infra.security;
 import com.dicionarioespanholAPI.infra.security.jwt.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,7 +20,6 @@ import java.util.Arrays;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.headers(headers -> headers.disable());
@@ -31,21 +29,18 @@ public class WebSecurityConfig {
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("localhost:8080").permitAll()
 
-                        .requestMatchers("/dicionario/getImages/{id}").permitAll()
-                        .requestMatchers("/dicionario/listar-palavras").permitAll()
-                        .requestMatchers("/dicionario/buscar-palavra/{id}").permitAll()
-                        .requestMatchers("/dicionario/buscadepalavra/{nome}").permitAll()
-                        .requestMatchers("/dicionario/buscadepalavraNumLetra/{num}").permitAll()
-                        .requestMatchers("/dicionario/buscaPorLetraInicial/{letra}").permitAll()
-                        .requestMatchers("/dicionario/buscaPorLetraFinal/{letra}").permitAll()
-                        .requestMatchers("/dicionario/buscaPorCriterios").permitAll()
+//                        .requestMatchers("/dicionario/getImages/{id}").permitAll()
+//                        .requestMatchers("/dicionario/listar-palavras").permitAll()
+//                        .requestMatchers("/dicionario/buscar-palavra/{id}").permitAll()
+//                        .requestMatchers("/dicionario/buscadepalavra/{nome}").permitAll()
+//                        .requestMatchers("/dicionario/buscadepalavraNumLetra/{num}").permitAll()
+//                        .requestMatchers("/dicionario/buscaPorLetraInicial/{letra}").permitAll()
+//                        .requestMatchers("/dicionario/buscaPorLetraFinal/{letra}").permitAll()
+//                        .requestMatchers("/dicionario/buscaPorCriterios").permitAll()
+//                        .requestMatchers("/dicionario/adicionar").permitAll()
+                        .requestMatchers("/dicionario/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST,"/dicionario/adicionar").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.DELETE,"/dicionario/deletar").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.PUT,"/dicionario/editar").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.PATCH,"/dicionario/ocorrenciasImage/{id}").hasRole("MANAGER")
-
-                        .requestMatchers("/administrador/**").hasRole("MANAGER")
+                        .requestMatchers("/administrador/**").permitAll()
 
                         .anyRequest().authenticated()
                 )
